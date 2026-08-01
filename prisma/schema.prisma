@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  password  String
+  role      String   @default("tenant")
+  createdAt DateTime @default(now())
+  applications Application[]
+}
+
+model Property {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  address     String
+  rent        Int
+  createdAt   DateTime @default(now())
+  applications Application[]
+}
+
+model Application {
+  id         Int      @id @default(autoincrement())
+  tenant     User     @relation(fields: [tenantId], references: [id])
+  tenantId   Int
+  property   Property @relation(fields: [propertyId], references: [id])
+  propertyId Int
+  message    String?
+  createdAt  DateTime @default(now())
+}
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
